@@ -92,10 +92,6 @@ namespace Scaffolder
             {
                 return Path.Combine($"{projectName}.Domain", "Interfaces", $"{entityName}Repository");
             }
-            else if (template.Contains("ServiceEvents"))
-            {
-                return Path.Combine($"{projectName}.Application", "ServiceEvents", $"{entityName}ServiceEvent");
-            }
             else if (template.EndsWith("ViewModel.txt"))
             {
                 return Path.Combine($"{projectName}.Api", @"ViewModels", $"{entityName}Controller",FileName(template, entityName), "Input");
