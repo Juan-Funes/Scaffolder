@@ -1,0 +1,32 @@
+﻿using AutoMapper;
+using projectName.Api.ViewModels.EntidadController.GetEntidadList.Input;
+using projectName.Api.ViewModels.EntidadController.GetEntidadList.Output;
+using projectName.Application.Queries.EntidadController;
+using projectName.Utils.Extensions;
+using projectName.Domain;
+
+namespace 
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public class GetEntidadList : Profile
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public GetEntidadList()
+        {
+            CreateMap<GetEntidadListViewModel, GetEntidadListQuery.Message>()
+                .ForMember(response => response.Page, act => act.MapFrom(src => src.Page ?? 1))
+                .ForMember(response => response.Size, act => act.MapFrom(src => src.Size ?? int.MaxValue))
+                .ForMember(response => response.Skip, act => act.MapFrom(src => (src.Page - 1) * src.Size))
+                .ForMember(response => response.OrderBy, act => act.MapFrom(src => src.OrderBy!.Trim().ToLower()))
+                .ForMember(response => response.OrderDirection, act => act.MapFrom(src => src.OrderDirection!.Trim().ToLower()))
+                ;
+
+
+            CreateMap<Entidad, EntidadViewModel>();
+        }
+    }
+}

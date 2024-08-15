@@ -1,0 +1,63 @@
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using projectName.Common.LogsEvents;
+using projectName.DataAccess.Interface;
+using projectName.Domain;
+
+namespace ;
+
+public class DeleteentidadCommand : IRequest<entidad>
+{
+
+    public int Id { get; }
+
+    public DeleteentidadCommand(int id)
+    {
+        Id = id;
+    }
+}
+
+public class DeleteentidadCommandHandler : IRequestHandler<DeleteentidadCommand, entidad>
+{
+    private readonly ILogger<DeleteentidadCommandHandler> _logger;
+    private readonly IentidadRepository _entidadRepository;
+
+    public DeleteentidadCommandHandler(
+        ILogger<DeleteentidadCommandHandler> logger,
+        IentidadRepository entidadRepository)
+    {
+        _logger = logger;
+        _entidadRepository = entidadRepository;
+    }
+
+    public async Task<entidad> Handle(DeleteentidadCommand request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogTrace(ServiceEvents.EnteringToDeleteentidadCommandHandler, "Ejecutando Handle()");
+
+            var item = await _entidadRepository.All()
+                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken: cancellationToken);
+           
+            if (item!.Activo)
+            {
+                item!.Activo = false;
+            }
+            else
+            {
+                item!.Activo = true;
+            }
+
+            await _entidadRepository.UpdateAsync(item);
+
+            return item;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ServiceEvents.ExceptionInDeleteentidadCommandHandler, ex,
+                "Excepcion llamando a DeleteentidadCommandHandler()");
+            throw;
+        }
+    }
+}

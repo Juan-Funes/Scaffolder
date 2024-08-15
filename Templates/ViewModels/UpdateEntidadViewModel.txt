@@ -1,0 +1,10 @@
+﻿namespace 
+{
+    public class UpdateEntidadViewModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        propiedades
+    }
+}

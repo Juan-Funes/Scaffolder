@@ -1,0 +1,85 @@
+﻿using System.Linq.Expressions;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using projectName.Common.LogsEvents;
+using projectName.DataAccess.Interface;
+using projectName.Domain;
+
+namespace 
+{
+    public class GetentidadListQuery : IRequest<KeyValuePair<int, List<entidad>>>
+    {
+        public Message Parameter { get; }
+
+        public class Message
+        {
+            public int Page { get; set; }
+            public int Size { get; set; }
+            public int Skip { get; set; }
+            public string? OrderBy { get; set; }
+            public string? OrderDirection { get; set; }
+            
+			propiedades
+        }
+
+
+
+        public GetentidadListQuery(Message parameter)
+        {
+            Parameter = parameter;
+
+        }
+        
+    }
+
+    public class GetentidadListQueryHandler : IRequestHandler<GetentidadListQuery, KeyValuePair<int, List<entidad>>>
+    {
+        private readonly ILogger<GetentidadListQueryHandler> _logger;
+        private readonly IentidadRepository _entidadRepository;
+
+        public GetentidadListQueryHandler(ILogger<GetentidadListQueryHandler> logger
+            , IentidadRepository entidadRepository)
+        {
+            _logger = logger;
+            _entidadRepository = entidadRepository;
+        }
+
+        public async Task<KeyValuePair<int, List<entidad>>> Handle(GetentidadListQuery request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _logger.LogTrace(ServiceEvents.EnteringToGetentidadListQueryHandler, "Ejecutando Handle()");
+
+                #region Filters
+                Expression<Func<entidad, bool>> filter = x => ();
+                #endregion
+
+                #region Order
+                Func<IQueryable<entidad>, IOrderedQueryable<entidad>>? orderBy;
+                switch (request.Parameter.OrderBy)
+                {
+                    default:
+                        
+                        break;
+                }
+                #endregion
+
+                #region Includes
+                var includes = string.Empty;
+                #endregion
+
+                var entities = await _entidadRepository.Get(filter, orderBy, includes).Skip(request.Parameter.Skip).Take(request.Parameter.Size).ToListAsync(cancellationToken);
+                var count = await _entidadRepository.All().CountAsync(filter, cancellationToken);
+
+                return new KeyValuePair<int, List<entidad>>(count, entities);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ServiceEvents.ExceptionInGetentidadListQueryHandler, ex,
+                    "Excepcion llamando a GetentidadListQueryHandler()");
+                throw;
+            }
+        }
+    }
+}

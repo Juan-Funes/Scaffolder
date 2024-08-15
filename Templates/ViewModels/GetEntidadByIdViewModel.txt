@@ -1,0 +1,16 @@
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace 
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public class GetEntidadByIdViewModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        [FromRoute(Name = "id")]
+        public int Id { get; set; }
+    }
+}

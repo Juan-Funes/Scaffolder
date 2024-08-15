@@ -1,0 +1,21 @@
+﻿using AutoMapper;
+using projectName.Api.ViewModels.EntidadController.GetEntidadById.Output;
+using projectName.Domain;
+
+namespace 
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public class GetEntidadById : Profile
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public GetEntidadById()
+        {
+
+            CreateMap<Entidad, GetEntidadByIdViewModelResponse>();
+        }
+    }
+}

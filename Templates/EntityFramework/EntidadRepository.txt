@@ -1,0 +1,12 @@
+﻿using projectName.DataAccess.Interface;
+using projectName.Domain;
+
+namespace 
+{
+    public class EntidadRepository : GenericRepository<Entidad>, IEntidadRepository
+    {
+        public EntidadRepository(ColocaTuContext dbContext) : base(dbContext)
+        {
+        }
+    }
+}

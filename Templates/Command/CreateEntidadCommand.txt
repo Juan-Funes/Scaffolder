@@ -1,0 +1,74 @@
+﻿using MediatR;
+using Microsoft.Extensions.Logging;
+using projectName.Common.Exceptions;
+using projectName.Common.LogsEvents;
+using projectName.DataAccess.Interface;
+using projectName.Domain;
+
+namespace 
+{
+    public class CreateentidadCommand : IRequest<entidad>
+    {
+        public Message Parameter { get; }
+        public class Message
+        {
+            propiedades
+
+        }
+        public CreateentidadCommand(Message parameter)
+        {
+            Parameter = parameter;
+        }
+    }
+
+
+    public class CreateentidadCommandHandler : IRequestHandler<CreateentidadCommand, entidad>
+    {
+        private readonly ILogger<CreateentidadCommandHandler> _logger;
+        private readonly IentidadRepository _entidadRepository;
+
+        public CreateentidadCommandHandler(ILogger<CreateentidadCommandHandler> logger
+            , IentidadRepository entidadRepository)
+        {
+            _logger = logger;
+            _entidadRepository = entidadRepository;
+        }
+
+        public async Task<entidad> Handle(CreateentidadCommand request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _logger.LogTrace(ServiceEvents.EnteringToCreateentidadCommandHandler, "Ejecutando Handle()");
+
+                var item = _entidadRepository.All()
+                    .FirstOrDefault(x => x.RazonSocial == request.Parameter.RazonSocial 
+                                         || x.Cuit == request.Parameter.Cuit);
+
+                if (item != null)
+                {
+                    throw new BusinessException(ServiceEvents.ErrorInCreateentidadCommandHandler, new Error
+                    {
+                        Code = "entidad_EXISTENTE",
+                        Title = "entidad existente",
+                        Detail = "El entidad ya está registrado."
+                    });
+                }
+                
+
+                item = new entidad
+                {
+                };
+
+                item = await _entidadRepository.AddAsync(item);
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ServiceEvents.ExceptionInCreateentidadCommandHandler, ex,
+                    "Excepcion llamando a CreateentidadCommandHandler()");
+                throw;
+            }
+        }
+    }
+}

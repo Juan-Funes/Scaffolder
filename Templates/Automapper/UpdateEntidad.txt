@@ -1,0 +1,22 @@
+﻿using AutoMapper;
+using projectName.Api.ViewModels.EntidadController.UpdateEntidad.Input;
+using projectName.Api.ViewModels.EntidadController.UpdateEntidad.Output;
+using projectName.Application.Command.EntidadController;
+
+namespace 
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public class UpdateEntidad:Profile
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public UpdateEntidad()
+        {
+            CreateMap<UpdateEntidadViewModel, UpdateEntidadCommand.Message>();
+            CreateMap<Domain.Entidad, UpdateEntidadViewModelResponse>();
+        }
+    }
+}

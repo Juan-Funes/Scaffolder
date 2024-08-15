@@ -1,0 +1,42 @@
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace 
+{
+    public class GetEntidadListViewModel
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        [FromQuery(Name = "page")]
+        public int? Page { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [FromQuery(Name = "size")]
+        public int? Size { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [FromQuery(Name = "skip")]
+        public int? Skip { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [FromQuery(Name = "orderBy")]
+        public string? OrderBy { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [FromQuery(Name = "orderDirection")]
+        public string? OrderDirection { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        propiedades
+    }
+}

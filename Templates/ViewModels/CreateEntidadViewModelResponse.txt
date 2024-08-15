@@ -1,0 +1,16 @@
+﻿using Newtonsoft.Json;
+
+namespace 
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CreateProveedorViewModelResponse
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        [JsonProperty("id")]
+        public int Id { get; set; }
+    }
+}

@@ -1,0 +1,35 @@
+﻿using Newtonsoft.Json;
+
+namespace ;
+
+public class GetEntidadListViewModelResponse
+{/// <summary>
+    /// 
+    /// </summary>
+    [JsonProperty("total")]
+    public int Total { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [JsonProperty("list")]
+    public List<EntidadViewModel>? List { get; set; }
+}
+
+/// <summary>
+/// 
+/// </summary>
+public class EntidadViewModel
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    [JsonProperty("id")]
+    public int Id { get; set; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+   propiedades
+
+}

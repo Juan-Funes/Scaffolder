@@ -1,0 +1,63 @@
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using projectName.Common.LogsEvents;
+using projectName.DataAccess.Interface;
+using projectName.Domain;
+
+namespace 
+{
+    public class UpdateentidadCommand : IRequest<entidad>
+    {
+        public int Id { get; }
+        public Message Parameter { get; }
+        public class Message
+        {
+
+            propiedades
+
+        }
+        public UpdateentidadCommand(int id, Message parameter)
+        {
+            Id = id;
+            Parameter = parameter;
+        }
+    }
+
+    public class UpdateentidadCommandHandler : IRequestHandler<UpdateentidadCommand, entidad>
+    {
+        private readonly ILogger<UpdateentidadCommandHandler> _logger;
+        private readonly IentidadRepository _entidadRepository;
+
+        public UpdateentidadCommandHandler(ILogger<UpdateentidadCommandHandler> logger
+            , IentidadRepository entidadRepository)
+        {
+            _logger = logger;
+            _entidadRepository = entidadRepository;
+        }
+
+        public async Task<entidad> Handle(UpdateentidadCommand request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _logger.LogTrace(ServiceEvents.EnteringToUpdateentidadCommandHandler, "Ejecutando Handle()");
+
+                var item = await _entidadRepository.All()
+                    .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken: cancellationToken);
+                
+            
+                
+                
+                await _entidadRepository.UpdateAsync(item);
+
+                return item;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ServiceEvents.ExceptionInUpdateentidadCommandHandler, ex,
+                    "Excepcion llamando a UpdateentidadCommandHandler()");
+                throw;
+            }
+        }
+    }
+}

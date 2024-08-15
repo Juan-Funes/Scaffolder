@@ -1,0 +1,55 @@
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using projectName.Common.LogsEvents;
+using projectName.DataAccess.Interface;
+using projectName.Domain;
+
+namespace 
+{
+    public class GetentidadByIdQuery : IRequest<entidad>
+    {
+
+        public int Id { get; }
+
+        public GetentidadByIdQuery(int id)
+        {
+            Id = id;
+        }
+    }
+
+
+    public class GetentidadByIdQueryHandler : IRequestHandler<GetentidadByIdQuery, entidad>
+    {
+        private readonly ILogger<GetentidadByIdQueryHandler> _logger;
+        private readonly IentidadRepository _entidadRepository;
+
+        public GetentidadByIdQueryHandler(
+            ILogger<GetentidadByIdQueryHandler> logger,
+            IentidadRepository entidadRepository)
+        {
+            _logger = logger;
+            _entidadRepository = entidadRepository;
+        }
+
+        public async Task<entidad> Handle(GetentidadByIdQuery request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _logger.LogTrace(ServiceEvents.EnteringToGetentidadByIdQueryHandler, "Ejecutando Handle()");
+
+                var result = await _entidadRepository.All()
+                    .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+
+
+                return result!;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ServiceEvents.ExceptionInGetentidadByIdQueryHandler, ex,
+                    "Excepcion llamando a GetentidadByIdQueryHandler()");
+                throw;
+            }
+        }
+    }
+}

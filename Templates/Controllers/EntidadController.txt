@@ -1,0 +1,155 @@
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+using System.Net.Mime;
+using projectName.Api.Filters;
+using projectName.Api.ViewModels.EntidadController.CreateEntidad.Input;
+using projectName.Api.ViewModels.EntidadController.CreateEntidad.Output;
+using projectName.Api.ViewModels.EntidadController.GetEntidadById.Input;
+using projectName.Api.ViewModels.EntidadController.GetEntidadById.Output;
+using projectName.Api.ViewModels.EntidadController.GetEntidadList.Input;
+using projectName.Api.ViewModels.EntidadController.GetEntidadList.Output;
+using projectName.Api.ViewModels.EntidadController.UpdateEntidad.Input;
+using projectName.Api.ViewModels.EntidadController.UpdateEntidad.Output;
+using projectName.Application.Commands.EntidadController;
+using projectName.Application.Queries.EntidadController;
+using projectName.Domain.Enums;
+using projectName.Api.ViewModels.EntidadController.DeleteEntidad.Input;
+using projectName.Api.ViewModels.EntidadController.Common;
+using projectName.Api.ViewModels.EntidadController.GetEntidadesActivos.Input;
+using projectName.Api.ViewModels.EntidadController.GetEntidadesConOP.Output;
+using projectName.Domain;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
+namespace projectName
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    [ApiController]
+    [ApiVersion("1.0")]
+    [Route(RouteRoot)]
+    public class EntidadController : ControllerBase
+    {
+
+        private const string RouteRoot = "api/v{version:apiVersion}";
+        private readonly ILogger<EntidadController> _logger;
+        private readonly IMediator _mediator;
+        private readonly IMapper _mapper;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="mediator"></param>
+        /// <param name="mapper"></param>
+        public EntidadController(ILogger<EntidadController> logger, IMediator mediator
+            , IMapper mapper)
+        {
+            _logger = logger;
+            _mediator = mediator;
+            _mapper = mapper;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("Entidad")]
+        [SwaggerOperation(Summary = "Consulta de Entidades", Tags = new[] { "Entidades" })]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(GetEntidadListViewModelResponse), StatusCodes.Status200OK)]
+        [Produces(MediaTypeNames.Application.Json, "application/problem+json")]
+        public async Task<IActionResult> GetEntidadList([FromQuery] GetEntidadListViewModel model)
+        {
+            _logger.LogDebug("entering to GetEntidadList");
+
+            var mapped = _mapper.Map<GetEntidadListQuery.Message>(model);
+            var Entidad = await _mediator.Send(new GetEntidadListQuery(mapped));
+
+            var response = new GetEntidadListViewModelResponse
+            {
+                Total = Entidad.Key,
+                List = _mapper.Map<List<EntidadViewModel>>(Entidad.Value)
+            };
+            return Ok(response);
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("Entidad/{id}")]
+        [SwaggerOperation(Summary = "Consulta de Entidad por id.", Tags = new[] { "Entidades" })]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(GetEntidadByIdViewModelResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Produces(MediaTypeNames.Application.Json, "application/problem+json")]
+        public async Task<IActionResult> GetEntidadById([FromRoute] GetEntidadByIdViewModel model)
+        {
+            var Entidad = await _mediator.Send(new GetEntidadByIdQuery(model.Id));
+            var response = _mapper.Map<GetEntidadByIdViewModelResponse>(Entidad);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("Entidad")]
+        [SwaggerOperation(Summary = "Crea un Entidad nuevo", Tags = new[] { "Entidades" })]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(CreateEntidadViewModelResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Produces(MediaTypeNames.Application.Json, "application/problem+json")]
+        public async Task<IActionResult> CreateEntidad([FromBody] CreateEntidadViewModel model)
+        {
+            _logger.LogDebug("entering to CreateEntidad");
+
+            var mapped = _mapper.Map<CreateEntidadCommand.Message>(model);
+            var Entidad = await _mediator.Send(new CreateEntidadCommand(mapped));
+            var response = _mapper.Map<CreateEntidadViewModelResponse>(Entidad);
+            return CreatedAtAction("CreateEntidad", new { id = response.Id }, response);
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut("Entidad/{id}")]
+        [SwaggerOperation(Summary = "Actualiza un Entidad", Tags = new[] { "Entidades" })]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(UpdateEntidadViewModelResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Produces(MediaTypeNames.Application.Json, "application/problem+json")]
+        public async Task<IActionResult> UpdateEntidad([FromRoute] int id, [FromBody] UpdateEntidadViewModel model)
+        {
+            var mapped = _mapper.Map<UpdateEntidadCommand.Message>(model);
+            var Entidad = await _mediator.Send(new UpdateEntidadCommand(id, mapped));
+            var response = _mapper.Map<UpdateEntidadViewModelResponse>(Entidad);
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete("Entidad/{id}")]
+        [SwaggerOperation(Summary = "Inhabilita logicamente un Entidad", Tags = new[] { "Entidades" })]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [Produces(MediaTypeNames.Application.Json, "application/problem+json")]
+        public async Task<IActionResult> DeleteEntidad([FromRoute] DeleteEntidadViewModel model)
+        {
+            await _mediator.Send(new DeleteEntidadCommand(model.Id));
+            return NoContent();
+        }
+
+    }
+}

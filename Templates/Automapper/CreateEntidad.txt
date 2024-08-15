@@ -1,0 +1,20 @@
+﻿using AutoMapper;
+using projectName.Api.ViewModels.EntidadController.CreateEntidad.Input;
+using projectName.Api.ViewModels.EntidadController.CreateEntidad.Output;
+using projectName.Application.Command.EntidadController;
+
+namespace 
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CreateEntidad : Profile
+    {
+        public CreateEntidad()
+        {
+            CreateMap<CreateEntidadViewModel, CreateEntidadCommand.Message>();
+            CreateMap<Domain.Entidad, CreateEntidadViewModelResponse>();
+
+        }
+    }
+}
